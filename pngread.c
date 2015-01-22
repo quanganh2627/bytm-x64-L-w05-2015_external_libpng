@@ -746,6 +746,7 @@ png_build_index(png_structp png_ptr)
    png_uint_32 i, j;
    png_bytep rp;
    int p, pass_number = 1;
+   unsigned int row_buf_size;
 
 #ifdef PNG_READ_INTERLACING_SUPPORTED
    pass_number = png_set_interlace_handling(png_ptr);
@@ -763,7 +764,12 @@ png_build_index(png_structp png_ptr)
       number_rows_in_pass[0] = 8;
    }
 
-   rp = png_malloc(png_ptr, png_ptr->rowbytes);
+   if (png_ptr->maximum_pixel_depth)
+      row_buf_size = PNG_ROWBYTES(png_ptr->maximum_pixel_depth, png_ptr->width);
+   else
+      row_buf_size = png_ptr->rowbytes;
+
+   rp = png_malloc(png_ptr, row_buf_size);
 
    png_indexp index = png_malloc(png_ptr, sizeof(png_index));
    png_ptr->index = index;
